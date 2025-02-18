@@ -6,7 +6,7 @@ import { createUser, findUserByEmail, findUserById, updateUserDetail } from "../
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "defaultsecret";
-const JWT_EXPIRATION = "1h";
+const JWT_EXPIRATION = "30d";
 
 // Function to generate a JWT token
 const generateToken = (user) => {
