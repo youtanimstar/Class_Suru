@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { createUser, findUserByEmail, findUserById } from "../models/userModel.js";
+import { createUser, findUserByEmail, findUserById, updateUserDetail } from "../models/userModel.js";
 
 dotenv.config();
 
@@ -90,9 +90,24 @@ const getUserDetails = async (req, res) => {
     }
 };
 
+// Update User Details Route
+const updateUser = async (req, res) => {
+    try {
+        const { userId, exam, userClass, favouriteSubject } = req.body;
+        if (!userId || !exam || !userClass || !favouriteSubject) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
+
+        const updatedUser = await updateUserDetail(userId, exam, userClass, favouriteSubject);
+        res.status(200).json({ success: true, message: "User details updated successfully", user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+};
+
 // Protected Route Example
 const protectedRoute = (req, res) => {
     res.json({ success: true, message: "This is a protected route", user: req.user });
 };
 
-export { signup, login, verifyToken, protectedRoute, getUserDetails };
+export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser };

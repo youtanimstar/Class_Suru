@@ -63,4 +63,17 @@ const findUserById = async (userId) => {
   }
 };
 
-export { createUser, findUserByEmail, findUserById };
+const updateUserDetail = async (userId, exam, userClass, favouriteSubject) => {
+  try {
+    const result = await pool.query(
+      "UPDATE users SET exam_for = $1, class = $2, favourite_subject = $3 WHERE id = $4 RETURNING *",
+      [exam, userClass, favouriteSubject, userId]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error("Database error (updateUserDetail):", error);
+    throw new Error("Database error");
+  }
+};
+
+export { createUser, findUserByEmail, findUserById, updateUserDetail };
