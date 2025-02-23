@@ -15,7 +15,7 @@ import {
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "defaultsecret";
-const JWT_EXPIRATION = "1h";
+const JWT_EXPIRATION = "30d";
 
 // Email configuration
 const transporter = nodemailer.createTransport({
