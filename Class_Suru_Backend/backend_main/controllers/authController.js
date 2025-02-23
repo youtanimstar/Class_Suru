@@ -1,12 +1,30 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { createUser, findUserByEmail, findUserById, updateUserDetail } from "../models/userModel.js";
+import nodemailer from "nodemailer";
+import {
+    createUser,
+    findUserByEmail,
+    findUserById,
+    updateUserDetail,
+    storeResetToken,
+    getUserByResetToken,
+    updateUserPassword
+} from "../models/userModel.js";
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "defaultsecret";
 const JWT_EXPIRATION = "1h";
+
+// Email configuration
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+    },
+});
 
 // Function to generate a JWT token
 const generateToken = (user) => {
@@ -76,6 +94,65 @@ const login = async (req, res) => {
     }
 };
 
+// Forgot Password Route
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email is required" });
+        }
+
+        const user = await findUserByEmail(email);
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User not found" });
+        }
+
+        const resetToken = jwt.sign({ email }, JWT_SECRET, { expiresIn: "1h" });
+
+        await storeResetToken(email, resetToken);
+
+        const resetLink = `http://localhost:5000/api/auth/reset-password/${resetToken}`;
+
+        await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "Password Reset Request",
+            html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
+        });
+
+        res.json({ success: true, message: "Password reset link sent to your email" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+};
+
+// Reset Password Route
+const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { newPassword } = req.body;
+
+        if (!token || !newPassword) {
+            return res.status(400).json({ success: false, message: "Token and new password are required" });
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await getUserByResetToken(decoded.email, token);
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid or expired token" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await updateUserPassword(user.email, hashedPassword);
+
+        res.json({ success: true, message: "Password reset successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Invalid or expired token", error: error.message });
+    }
+};
+
 // Fetch User Details Route
 const getUserDetails = async (req, res) => {
     try {
@@ -110,4 +187,4 @@ const protectedRoute = (req, res) => {
     res.json({ success: true, message: "This is a protected route", user: req.user });
 };
 
-export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser };
+export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser, forgotPassword, resetPassword };

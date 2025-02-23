@@ -23,13 +23,13 @@ pool.connect((err, client, release) => {
   }
 });
 
+// Create a new user
 const createUser = async (email, username, hashedPassword, phoneNumber) => {
   try {
     const result = await pool.query(
       "INSERT INTO users (name, email, password, phone_number) VALUES ($1, $2, $3, $4) RETURNING id",
-      [username, email, hashedPassword, phoneNumber] 
+      [username, email, hashedPassword, phoneNumber]
     );
-    
     return result.rows[0];
   } catch (error) {
     console.error("Database error (createUser):", error);
@@ -37,12 +37,10 @@ const createUser = async (email, username, hashedPassword, phoneNumber) => {
   }
 };
 
+// Find user by email
 const findUserByEmail = async (email) => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     return result.rows[0];
   } catch (error) {
     console.error("Database error (findUserByEmail):", error);
@@ -50,12 +48,10 @@ const findUserByEmail = async (email) => {
   }
 };
 
+// Find user by ID
 const findUserById = async (userId) => {
   try {
-    const result = await pool.query(
-      "SELECT id, name, email, phone_number FROM users WHERE id = $1",
-      [userId]
-    );
+    const result = await pool.query("SELECT id, name, email, phone_number FROM users WHERE id = $1", [userId]);
     return result.rows[0];
   } catch (error) {
     console.error("Database error (findUserById):", error);
@@ -63,6 +59,7 @@ const findUserById = async (userId) => {
   }
 };
 
+// Update user details
 const updateUserDetail = async (userId, exam, userClass, favouriteSubject) => {
   try {
     const result = await pool.query(
@@ -76,4 +73,52 @@ const updateUserDetail = async (userId, exam, userClass, favouriteSubject) => {
   }
 };
 
-export { createUser, findUserByEmail, findUserById, updateUserDetail };
+// Store reset token and expiry time
+const storeResetToken = async (email, token) => {
+  try {
+    await pool.query(
+      "UPDATE users SET reset_token = $1, reset_token_expiry = NOW() + INTERVAL '1 hour' WHERE email = $2",
+      [token, email]
+    );
+  } catch (error) {
+    console.error("Database error (storeResetToken):", error);
+    throw new Error("Database error");
+  }
+};
+
+// Retrieve user by reset token
+const getUserByResetToken = async (email, token) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1 AND reset_token = $2 AND reset_token_expiry > NOW()",
+      [email, token]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error("Database error (getUserByResetToken):", error);
+    throw new Error("Database error");
+  }
+};
+
+// Update user password and clear reset token
+const updateUserPassword = async (email, newPassword) => {
+  try {
+    await pool.query(
+      "UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE email = $2",
+      [newPassword, email]
+    );
+  } catch (error) {
+    console.error("Database error (updateUserPassword):", error);
+    throw new Error("Database error");
+  }
+};
+
+export { 
+  createUser, 
+  findUserByEmail, 
+  findUserById, 
+  updateUserDetail, 
+  storeResetToken, 
+  getUserByResetToken, 
+  updateUserPassword 
+};
