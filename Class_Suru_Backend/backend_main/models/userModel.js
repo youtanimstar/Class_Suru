@@ -127,6 +127,7 @@ const updateUserPassword = async (email, newPassword) => {
 };
 
 export { 
+  pool,
   createUser, 
   findUserByEmail, 
   findUserById, 
