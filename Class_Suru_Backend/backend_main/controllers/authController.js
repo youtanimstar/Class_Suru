@@ -111,13 +111,24 @@ const forgotPassword = async (req, res) => {
 
         await storeResetToken(email, resetToken);
 
-        const resetLink = `http://localhost:5000/api/auth/reset-password/${resetToken}`;
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
         await transporter.sendMail({
             from: process.env.EMAIL,
             to: email,
             subject: "Password Reset Request",
-            html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
+            html: `
+            <div style="text-align: center;">
+                <img src="https://class-suru.vercel.app/assets/class_suru_logo-wIYO1Yaf.png" alt="Banner" style="width: 100%; max-width: 200px;margin:0 auto;"/>
+                <h2>Password Reset Request</h2>
+                <p>Dear User,</p>
+                <p>We received a request to reset your password. Click the link below to reset your password:</p>
+                <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+                <p>Thank you,</p>
+                <p>Class Suru Team</p>
+            </div>
+            `,
         });
 
         res.json({ success: true, message: "Password reset link sent to your email" });
@@ -129,8 +140,13 @@ const forgotPassword = async (req, res) => {
 // Reset Password Route
 const resetPassword = async (req, res) => {
     try {
-        const { token } = req.params;
+        console.log('resetPassword');
+        
+        const { token } = req.query;
         const { newPassword } = req.body;
+
+        console.log(token, newPassword);
+        
 
         if (!token || !newPassword) {
             return res.status(400).json({ success: false, message: "Token and new password are required" });
