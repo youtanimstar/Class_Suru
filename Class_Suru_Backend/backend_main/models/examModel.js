@@ -1,4 +1,4 @@
-import {pool} from "../models/userModel.js";  // Ensure correct database connection import
+import {pool} from "../models/userModel.js";  
 
 const createExam = async (title, type, exam_duration, exam_total_marks, exam_subject) => {
     try {
@@ -17,10 +17,10 @@ const createExam = async (title, type, exam_duration, exam_total_marks, exam_sub
 const getExamById = async (examId) => {
     try {
         const result = await pool.query(
-            'SELECT * FROM exams WHERE id = $1',  // Ensure correct column name (id instead of exam_id)
+            'SELECT * FROM exams WHERE id = $1',  
             [examId]
         );
-        return result.rows[0] || null;  // Return null if no exam is found
+        return result.rows[0] || null;  
     } catch (error) {
         console.error("Database error (getExamById):", error);
         throw new Error("Database error");
