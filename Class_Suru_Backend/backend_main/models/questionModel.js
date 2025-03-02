@@ -27,6 +27,7 @@ const createQuestion = async (examId, question_text, options, correct_option) =>
     }
 };
 
+
 /**
  * Fetches all questions for a given exam.
  * @param {number} exam_id - The exam ID.
