@@ -10,6 +10,9 @@ const pool = new pg.Pool({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
+  max: 20,  
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000
 });
 
 // Test the database connection
