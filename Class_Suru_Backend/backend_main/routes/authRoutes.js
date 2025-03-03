@@ -8,7 +8,7 @@ import {
     verifyToken, 
     updateUser 
 } from "../controllers/authController.js";
-import { createExam, getExamById, } from "../controllers/examController.js";
+import { createExam, getExamById, updateExam } from "../controllers/examController.js";
 import { createQuestion, getQuestionsByExamId } from "../controllers/questionController.js";
 
 
@@ -24,6 +24,7 @@ router.get("/exam/:examId", getExamById);
 router.put("/user/update", verifyToken, updateUser);
 router.post("/question/add", createQuestion);
 router.post("/question/exam/:exam_id", getQuestionsByExamId);
+router.post("/exam/update/:examId", updateExam);
 
 
 
