@@ -19,10 +19,10 @@ router.post("/login", login);
 router.post("/forgot-password", forgotPassword);  // New route for password reset request
 router.post("/reset-password", resetPassword);    // New route to reset the password
 router.post("/user/:id", verifyToken, getUserDetails); 
-router.post("/exam", createExam);
-router.get("/exam/:examId", getExamById);
-router.put("/user/update", verifyToken, updateUser);
-router.post("/question/add", createQuestion);
+router.post("/exam", createExam); // working fine
+router.get("/exam/:examId", getExamById); // working fine
+router.put("/user/update", verifyToken, updateUser); 
+router.post("/question/add", createQuestion); // working fine
 router.post("/question/exam/:exam_id", getQuestionsByExamId);
 
 

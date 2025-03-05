@@ -8,6 +8,19 @@ import { pool } from "../models/userModel.js";
  * @param {number} correct_option - The correct option index.
  * @returns {Promise<object>} - The created question.
  */
+
+const keepAliveQuery = async() => {
+    try {
+      await pool.query("SELECT 1");
+    //   console.log('Database is alive - questionModel');
+      
+    } catch (err) {
+      console.error("Error pinging database:", err.stack);
+    }
+  };
+
+  setInterval(keepAliveQuery, 300);
+
 const createQuestion = async (examId, question_text, options, correct_option) => {
     try {
         // Ensure options is stored as a JSON string

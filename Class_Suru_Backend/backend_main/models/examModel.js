@@ -1,5 +1,17 @@
 import {pool} from "../models/userModel.js";  
 
+const keepAliveQuery = async() => {
+    try {
+      await pool.query("SELECT 1");
+    //   console.log('Database is alive - questionModel');
+      
+    } catch (err) {
+      console.error("Error pinging database:", err.stack);
+    }
+  };
+
+setInterval(keepAliveQuery, 300);
+
 const createExam = async (title, type, exam_duration, exam_total_marks, exam_subject) => {
     try {
         const result = await pool.query(
@@ -13,6 +25,8 @@ const createExam = async (title, type, exam_duration, exam_total_marks, exam_sub
         throw new Error("Database error");
     }
 };
+
+
 
 const getExamById = async (examId) => {
     try {

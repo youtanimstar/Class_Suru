@@ -29,7 +29,7 @@ pool.connect((err, client, release) => {
 const keepAliveQuery = async() => {
   try {
     await pool.query("SELECT 1");
-    // console.log('Database is alive');
+    // console.log('Database is alive - userModel');
     
   } catch (err) {
     console.error("Error pinging database:", err.stack);
