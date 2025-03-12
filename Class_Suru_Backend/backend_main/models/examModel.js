@@ -77,7 +77,7 @@ const deleteExam = async (examId) => {
 const getExamBySubjectAndType = async (subject, type) => {
     try {
         const result = await pool.query(
-            "SELECT * FROM exams WHERE exam_subject = $1 AND type = $2",
+            "SELECT * FROM exams WHERE exam_subject = $1 AND type = $2 order by id desc",
             [subject, type]
         );
         return result.rows || [];
