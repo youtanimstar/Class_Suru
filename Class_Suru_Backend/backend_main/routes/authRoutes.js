@@ -10,7 +10,11 @@ import {
     getAllUsers
 } from "../controllers/authController.js";
 import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType } from "../controllers/examController.js";
-import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
+import { createQuestion, getQuestionsByExamId, updateQuestion} from "../controllers/questionController.js";
+import {getUserResult, getResultByAnswerId } from "../controllers/resultController.js";
+import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../models/answerModel.js";
+
+
 
 
 const router = express.Router();
@@ -40,7 +44,14 @@ router.get("/question/:question_id", getQuestionById); // done
 router.put("/question/update/:question_id", updateQuestion); // done
 router.delete("/question/delete/:question_id", deleteQuestion); // done
 
+// Result Apis
+router.get("/result/:answerId", getResultByAnswerId);
+router.get("/result/user/:userId", getUserResult);
 
+//answer Apis
+router.post("/answers/submit", submitAnswer);
+router.get("/answer/:questionId", getAnswerByQuestionId);       
+router.get("/answer/:answerId", getAnswerById);
 
 // update question
 // get all questions by subject name, type, exam id
