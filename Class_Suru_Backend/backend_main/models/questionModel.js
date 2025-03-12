@@ -59,4 +59,68 @@ const getQuestionsByExamId = async (exam_id) => {
     }
 };
 
-export { createQuestion, getQuestionsByExamId };
+const getQuestionByQuestionId = async (question_id) => {
+    try {
+        const result = await pool.query(
+            `SELECT * 
+             FROM questions 
+             WHERE question_id = $1`, 
+            [question_id]
+        );
+
+        // Parse JSON options safely
+        return result.rows.map(row => ({
+            ...row,
+            // options: (typeof row.options === "string" && row.options.trim() !== "") 
+            //     ? JSON.parse(row.options) 
+            //     : [] // Return empty array if options are invalid or NULL
+        }));
+    } catch (error) {
+        console.error("Database error (getQuestionById):", error);
+        throw new Error(error.message || "Database error while fetching question");
+    }
+}
+
+
+const updateQuestion = async (question_id, updates) => {
+    try {
+        // ✅ Validate input fields
+        if (!updates) {
+            throw new Error("Some update field required");
+        }
+
+        const fields = Object.keys(updates);
+        if (fields.length === 0) {
+            throw new Error("No fields to update");
+        }
+
+        const values = fields.map((field, index) => `${field} = $${index + 2}`).join(", ");
+        const query = `UPDATE questions SET ${values} WHERE question_id = $1 RETURNING *`;
+
+        const result = await pool.query(query, [question_id, ...fields.map(field => updates[field])]);
+
+        return result.rows[0] || null;
+    } catch (error) {
+        console.error("Database error (updateQuestion):", error);
+        throw new Error(error.message || "Database error while updating question");
+    }
+}
+
+const deleteQuestion = async (question_id) => {
+    try {
+        const result = await pool.query(
+            `DELETE FROM questions 
+             WHERE question_id = $1 
+             RETURNING *`,
+            [question_id]
+        );
+
+        return result.rows[0] || null;
+    } catch (error) {
+        console.error("Database error (deleteQuestion):", error);
+        throw new Error(error.message || "Database error while deleting question");
+    }
+}
+
+
+export { createQuestion, getQuestionsByExamId, getQuestionByQuestionId, updateQuestion, deleteQuestion };

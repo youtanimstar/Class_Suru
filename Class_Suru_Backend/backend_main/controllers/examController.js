@@ -1,7 +1,9 @@
 import { 
   createExam as createExamModel, 
   getExamById as getExamByIdModel, 
-  updateExam as updateExamModel 
+  updateExam as updateExamModel ,
+  deleteExam as deleteExamModel,
+  getExamBySubjectAndType as getExamBySubjectAndTypeModel
 } from '../models/examModel.js';
 
 /**
@@ -71,5 +73,39 @@ const updateExam = async (req, res) => {
   }
 };
 
+const deleteExam = async (req, res) => {
+  try {
+      const { examId } = req.params;
+
+      // Delete exam from the database
+      const deletedExam = await deleteExamModel(examId);
+
+      if (!deletedExam) {
+          return res.status(404).json({ success: false, message: "Exam not found" });
+      }
+
+      res.status(200).json({ success: true, message: "Exam deleted successfully", deletedExam });
+  } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+const getExamBySubjectAndType = async (req, res) => {
+    try {
+        const { subject, type } = req.params;
+    
+        // Fetch exam from the database
+        const exam = await getExamBySubjectAndTypeModel(subject, type);
+    
+        if (!exam) {
+            return res.status(404).json({ success: false, message: "Exam not found" });
+        }
+    
+        res.status(200).json({ success: true, exam });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+    };
+
 // Export controllers
-export { createExam, getExamById, updateExam };
+export { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType };

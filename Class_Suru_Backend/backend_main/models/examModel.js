@@ -57,4 +57,34 @@ const updateExam = async (examId, updates) => {
     }
 };
 
-export { createExam, getExamById, updateExam };
+const deleteExam = async (examId) => {
+    try {
+        const result = await pool.query(
+            "DELETE FROM exams WHERE id = $1 RETURNING *",
+            [examId]
+        );
+        await pool.query(
+            "DELETE FROM questions WHERE exam_id = $1",
+            [examId]
+        );
+        return result.rows[0] || null;
+    } catch (error) {
+        console.error("Database error (deleteExam):", error);
+        throw new Error("Database error while deleting exam");
+    }
+}
+
+const getExamBySubjectAndType = async (subject, type) => {
+    try {
+        const result = await pool.query(
+            "SELECT * FROM exams WHERE exam_subject = $1 AND type = $2",
+            [subject, type]
+        );
+        return result.rows || [];
+    } catch (error) {
+        console.error("Database error (getExamBySubjectAndType):", error);
+        throw new Error("Database error while fetching exam");
+    }
+}
+
+export { createExam, getExamById, updateExam,deleteExam, getExamBySubjectAndType };
