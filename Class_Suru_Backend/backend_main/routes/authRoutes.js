@@ -10,7 +10,8 @@ import {
     getAllUsers
 } from "../controllers/authController.js";
 import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType } from "../controllers/examController.js";
-import { createQuestion, getQuestionsByExamId, updateQuestion} from "../controllers/questionController.js";
+import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
+
 import {getUserResult, getResultByAnswerId } from "../controllers/resultController.js";
 import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../models/answerModel.js";
 
