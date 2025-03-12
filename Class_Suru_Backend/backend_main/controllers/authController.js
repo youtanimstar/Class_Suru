@@ -9,7 +9,8 @@ import {
     updateUserDetail,
     storeResetToken,
     getUserByResetToken,
-    updateUserPassword
+    updateUserPassword,
+    getAllUsers as getAllUsersModel
 } from "../models/userModel.js";
 
 dotenv.config();
@@ -203,4 +204,13 @@ const protectedRoute = (req, res) => {
     res.json({ success: true, message: "This is a protected route", user: req.user });
 };
 
-export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser, forgotPassword, resetPassword };
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await getAllUsersModel();
+        res.status(200).json({ success: true, users });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+}
+
+export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser, forgotPassword, resetPassword,getAllUsers };

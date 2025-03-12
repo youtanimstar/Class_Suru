@@ -6,7 +6,8 @@ import {
     resetPassword, 
     getUserDetails, 
     verifyToken, 
-    updateUser 
+    updateUser,
+    getAllUsers
 } from "../controllers/authController.js";
 import { createExam, getExamById, updateExam } from "../controllers/examController.js";
 import { createQuestion, getQuestionsByExamId, updateQuestion} from "../controllers/questionController.js";
@@ -15,14 +16,25 @@ import { createQuestion, getQuestionsByExamId, updateQuestion} from "../controll
 
 const router = express.Router();
 
+// User Apis
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);  // New route for password reset request
 router.post("/reset-password", resetPassword);    // New route to reset the password
-router.post("/user/:id", verifyToken, getUserDetails); 
-router.post("/exam", createExam);
+router.post("/user/:id", verifyToken, getUserDetails);
+router.put("/user/update", verifyToken, updateUser);//  
+
+router.get("/user/all",getAllUsers);
+
+// Exam Apis
+router.post("/exam", createExam); // done
 router.get("/exam/:examId", getExamById);
-router.put("/user/update", verifyToken, updateUser);
+router.get("/exam/:subject/:type", getExamBySubjectAndType);
+router.put("/exam/update/:examId", updateExam);
+router.delete("/exam/delete/:examId", deleteExam);
+
+
+// Questions Apis
 router.post("/question/add", createQuestion);
 router.post("/question/exam/:exam_id", getQuestionsByExamId);
 router.post("/exam/update/:examId", updateExam);
