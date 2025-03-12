@@ -9,7 +9,8 @@ import {
     updateUser 
 } from "../controllers/authController.js";
 import { createExam, getExamById, updateExam } from "../controllers/examController.js";
-import { createQuestion, getQuestionsByExamId } from "../controllers/questionController.js";
+import { createQuestion, getQuestionsByExamId, updateQuestion} from "../controllers/questionController.js";
+
 
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.put("/user/update", verifyToken, updateUser);
 router.post("/question/add", createQuestion);
 router.post("/question/exam/:exam_id", getQuestionsByExamId);
 router.post("/exam/update/:examId", updateExam);
+router.post("/question/edit/:questionId", updateQuestion);
 
 
 
