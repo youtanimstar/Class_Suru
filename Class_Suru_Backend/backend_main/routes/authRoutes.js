@@ -13,7 +13,7 @@ import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndTyp
 import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
 
 import {getUserResult, getResultByAnswerId } from "../controllers/resultController.js";
-import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../models/answerModel.js";
+import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../controllers/answerController.js";
 
 
 
@@ -52,7 +52,7 @@ router.get("/result/user/:userId", getUserResult);
 //answer Apis
 router.post("/answers/submit", submitAnswer);
 router.get("/answer/:questionId", getAnswerByQuestionId);       
-router.get("/answer/:answerId", getAnswerById);
+router.get("/answer/byid/:answerId", getAnswerById);
 
 // update question
 // get all questions by subject name, type, exam id
