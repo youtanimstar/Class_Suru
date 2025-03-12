@@ -1,6 +1,9 @@
 import { 
   createQuestion as createQuestionModel, 
-  getQuestionsByExamId as getQuestionByIdModel 
+  getQuestionsByExamId as getQuestionByIdModel,
+  getQuestionByQuestionId as getQuestionByQuestionIdModel,
+  updateQuestion as updateQuestionModel,
+  deleteQuestion as deleteQuestionModel
 } from '../models/questionModel.js';
 
 /**
@@ -48,4 +51,63 @@ try {
 }
 };
 
-export { createQuestion, getQuestionsByExamId };
+const getQuestionById = async (req, res) => {
+try {
+  const { question_id } = req.params;
+
+  if (!question_id) {
+    return res.status(400).json({ success: false, message: 'Question ID is required' });
+  }
+
+  const question = await getQuestionByQuestionIdModel(question_id);
+  res.status(200).json({ success: true, question });
+}
+catch (error) {
+  console.error("Error fetching question:", error);
+  res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+}
+};
+
+const updateQuestion = async (req, res) => {
+try {
+  const { question_id } = req.params;
+  const updates = req.body;
+
+  // ✅ Validate input fields
+  if (!updates) {
+    return res.status(400).json({ success: false, message: 'some update field required' });
+  }
+
+  // // ✅ Ensure options is an array
+  // if (!Array.isArray(options)) {
+  //   return res.status(400).json({ success: false, message: '`options` must be an array' });
+  // }
+
+  await updateQuestionModel(question_id, updates);
+
+  res.status(200).json({ success: true, message: "Question updated successfully"});
+}
+catch (error) {
+  console.error("Error updating question:", error);
+  res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+}
+};
+
+const deleteQuestion = async (req, res) => {
+try {
+  const { question_id } = req.params;
+
+  if (!question_id) {
+    return res.status(400).json({ success: false, message: 'Question ID is required' });
+  }
+
+  await deleteQuestionModel(question_id);
+  res.status(200).json({ success: true, message: "Question deleted successfully"});
+}
+catch (error) {
+  console.error("Error deleting question:", error);
+  res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+}
+};
+
+export { createQuestion, getQuestionsByExamId, getQuestionById, updateQuestion, deleteQuestion };

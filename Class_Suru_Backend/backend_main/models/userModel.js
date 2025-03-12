@@ -129,6 +129,16 @@ const updateUserPassword = async (email, newPassword) => {
   }
 };
 
+const getAllUsers = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM users");
+    return result.rows;
+  } catch (error) {
+    console.error("Database error (getAllUsers):", error);
+    throw new Error("Database error");
+  }
+}
+
 export { 
   pool,
   createUser, 
@@ -137,5 +147,6 @@ export {
   updateUserDetail, 
   storeResetToken, 
   getUserByResetToken, 
-  updateUserPassword 
+  updateUserPassword,
+  getAllUsers
 };
