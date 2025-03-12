@@ -26,18 +26,18 @@ pool.connect((err, client, release) => {
   }
 });
 
-const keepAliveQuery = async() => {
-  try {
-    await pool.query("SELECT 1");
-    // console.log('Database is alive');
+// const keepAliveQuery = async() => {
+//   try {
+//     await pool.query("SELECT 1");
+//     // console.log('Database is alive');
     
-  } catch (err) {
-    console.error("Error pinging database:", err.stack);
-  }
-};
+//   } catch (err) {
+//     console.error("Error pinging database:", err.stack);
+//   }
+// };
 
-// Set an interval to run the keep-alive query every 5 minutes (300000 milliseconds)
-setInterval(keepAliveQuery, 300);
+// // Set an interval to run the keep-alive query every 5 minutes (300000 milliseconds)
+// setInterval(keepAliveQuery, 300);
 
 // Create a new user
 const createUser = async (email, username, hashedPassword, phoneNumber) => {
