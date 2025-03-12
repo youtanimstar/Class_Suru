@@ -30,7 +30,7 @@ router.put("/user/update", verifyToken, updateUser);//
 
 router.post("/question/add", createQuestion);
 
-router.post("/question/exam/:exam_id", getQuestionsByExamId);
+router.get("/question/exam/:exam_id", getQuestionsByExamId);
 
 router.post("/exam/update/:examId", updateExam);
 
