@@ -14,12 +14,12 @@ const createExam = async (req, res) => {
       const { title, type, exam_description, exam_duration, exam_total_marks, exam_subject } = req.body;
 
       // Validate request body
-      if (!title || !type || !exam_description || !exam_duration || !exam_total_marks || !exam_subject) {
+      if (!title || !type || !exam_description || !exam_duration || !exam_total_marks || !exam_subject || !exam_subject) {
           return res.status(400).json({ success: false, message: "All fields are required" });
       }
 
       // Create exam in the database
-      const exam = await createExamModel(title, type, exam_duration, exam_total_marks, exam_subject);
+      const exam = await createExamModel(title, type, exam_duration, exam_total_marks, exam_subject,exam_description);
 
       res.status(201).json({ success: true, message: "Exam created successfully", exam });
   } catch (error) {

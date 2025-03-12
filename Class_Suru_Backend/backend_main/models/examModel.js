@@ -3,12 +3,12 @@ import { pool } from "../models/userModel.js";
 /**
  * Creates a new exam.
  */
-const createExam = async (title, type, exam_duration, exam_total_marks, exam_subject) => {
+const createExam = async (title, type, exam_duration, exam_total_marks, exam_subject,exam_description) => {
     try {
         const result = await pool.query(
-            `INSERT INTO exams (title, type, exam_duration, exam_total_marks, exam_subject) 
-             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [title, type, exam_duration, exam_total_marks, exam_subject]
+            `INSERT INTO exams (title, type, exam_duration, exam_total_marks, exam_subject,exam_description) 
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [title, type, exam_duration, exam_total_marks, exam_subject,exam_description]
         );
         return result.rows[0];
     } catch (error) {

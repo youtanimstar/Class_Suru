@@ -16,29 +16,29 @@ import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, 
 const router = express.Router();
 
 // User Apis
-router.post("/signup", signup);
-router.post("/login", login);
-router.post("/forgot-password", forgotPassword);  // New route for password reset request
-router.post("/reset-password", resetPassword);    // New route to reset the password
+router.post("/signup", signup); //done
+router.post("/login", login); //done
+router.post("/forgot-password", forgotPassword);  
+router.post("/reset-password", resetPassword);    
 router.post("/user/:id", verifyToken, getUserDetails);
-router.put("/user/update", verifyToken, updateUser);//  
+router.put("/user/update", verifyToken, updateUser);  
 
 router.get("/user/all",getAllUsers);
 
 // Exam Apis
 router.post("/exam", createExam); // done
-router.get("/exam/:examId", getExamById);
-router.get("/exam/:subject/:type", getExamBySubjectAndType);
-router.put("/exam/update/:examId", updateExam);
-router.delete("/exam/delete/:examId", deleteExam);
+router.get("/exam/:examId", getExamById); //done
+router.get("/exam/:subject/:type", getExamBySubjectAndType); // done
+router.put("/exam/update/:examId", updateExam); // done
+router.delete("/exam/delete/:examId", deleteExam); // done
 
 
 // Questions Apis
-router.post("/question/add", createQuestion);
-router.get("/question/exam/:exam_id", getQuestionsByExamId);
-router.get("/question/:question_id", getQuestionById);
-router.put("/question/update/:question_id", updateQuestion);
-router.delete("/question/delete/:question_id", deleteQuestion);
+router.post("/question/add", createQuestion); // done
+router.get("/question/exam/:exam_id", getQuestionsByExamId); //done
+router.get("/question/:question_id", getQuestionById); // done
+router.put("/question/update/:question_id", updateQuestion); // done
+router.delete("/question/delete/:question_id", deleteQuestion); // done
 
 
 
