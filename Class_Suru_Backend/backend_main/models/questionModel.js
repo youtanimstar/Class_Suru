@@ -11,7 +11,7 @@ import { pool } from "../models/userModel.js";
 const createQuestion = async (exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks) => {
     try {
         // Ensure options is stored as a JSON string
-        const formattedOptions = Array.isArray(options) ? JSON.stringify(options) : "[]";
+        // const formattedOptions = Array.isArray(options) ? JSON.stringify(options) : "[]";
 
         const result = await pool.query(
             `INSERT INTO questions (exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks) 
@@ -40,23 +40,87 @@ const createQuestion = async (exam_id, question_text,question_img_url, option_1,
 const getQuestionsByExamId = async (exam_id) => {
     try {
         const result = await pool.query(
-            `SELECT exam_id, question_text, options, correct_option 
+            `SELECT * 
              FROM questions 
              WHERE exam_id = $1`, 
             [exam_id]
         );
 
-        // ✅ Parse JSON options safely
+        // Parse JSON options safely
         return result.rows.map(row => ({
             ...row,
-            options: (typeof row.options === "string" && row.options.trim() !== "") 
-                ? JSON.parse(row.options) 
-                : [] // Return empty array if options are invalid or NULL
+            // options: (typeof row.options === "string" && row.options.trim() !== "") 
+            //     ? JSON.parse(row.options) 
+            //     : [] // Return empty array if options are invalid or NULL
         }));
     } catch (error) {
-        console.error("❌ Database error (getQuestionsByExamId):", error);
+        console.error("Database error (getQuestionsByExamId):", error);
         throw new Error(error.message || "Database error while fetching questions");
     }
 };
 
-export { createQuestion, getQuestionsByExamId };
+const getQuestionByQuestionId = async (question_id) => {
+    try {
+        const result = await pool.query(
+            `SELECT * 
+             FROM questions 
+             WHERE question_id = $1`, 
+            [question_id]
+        );
+
+        // Parse JSON options safely
+        return result.rows.map(row => ({
+            ...row,
+            // options: (typeof row.options === "string" && row.options.trim() !== "") 
+            //     ? JSON.parse(row.options) 
+            //     : [] // Return empty array if options are invalid or NULL
+        }));
+    } catch (error) {
+        console.error("Database error (getQuestionById):", error);
+        throw new Error(error.message || "Database error while fetching question");
+    }
+}
+
+
+const updateQuestion = async (question_id, updates) => {
+    try {
+        // ✅ Validate input fields
+        if (!updates) {
+            throw new Error("Some update field required");
+        }
+
+        const fields = Object.keys(updates);
+        if (fields.length === 0) {
+            throw new Error("No fields to update");
+        }
+
+        const values = fields.map((field, index) => `${field} = $${index + 2}`).join(", ");
+        const query = `UPDATE questions SET ${values} WHERE question_id = $1 RETURNING *`;
+
+        const result = await pool.query(query, [question_id, ...fields.map(field => updates[field])]);
+
+        return result.rows[0] || null;
+    } catch (error) {
+        console.error("Database error (updateQuestion):", error);
+        throw new Error(error.message || "Database error while updating question");
+    }
+}
+
+const deleteQuestion = async (question_id) => {
+    try {
+        const result = await pool.query(
+            `DELETE FROM questions 
+             WHERE question_id = $1 
+             RETURNING *`,
+            [question_id]
+        );
+
+        return result.rows[0] || null;
+    } catch (error) {
+        console.error("Database error (deleteQuestion):", error);
+        throw new Error(error.message || "Database error while deleting question");
+    }
+}
+
+
+export { createQuestion, getQuestionsByExamId, getQuestionByQuestionId, updateQuestion, deleteQuestion };

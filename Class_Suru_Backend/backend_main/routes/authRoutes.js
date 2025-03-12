@@ -9,8 +9,11 @@ import {
     updateUser,
     getAllUsers
 } from "../controllers/authController.js";
-import { createExam, getExamById, updateExam } from "../controllers/examController.js";
+import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType } from "../controllers/examController.js";
 import { createQuestion, getQuestionsByExamId, updateQuestion} from "../controllers/questionController.js";
+import {getUserResult, getResultByAnswerId } from "../controllers/resultController.js";
+import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../models/answerModel.js";
+
 
 
 
@@ -39,6 +42,15 @@ router.post("/question/add", createQuestion);
 router.post("/question/exam/:exam_id", getQuestionsByExamId);
 router.post("/exam/update/:examId", updateExam);
 router.post("/question/edit/:questionId", updateQuestion);
+
+// Result Apis
+router.get("/result/:answerId", getResultByAnswerId);
+router.get("/result/user/:userId", getUserResult);
+
+//answer Apis
+router.post("/answers/submit", submitAnswer);
+router.get("/answer/:questionId", getAnswerByQuestionId);       
+router.get("/answer/:answerId", getAnswerById);
 
 
 
