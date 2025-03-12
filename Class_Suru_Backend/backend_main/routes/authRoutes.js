@@ -18,13 +18,27 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);  // New route for password reset request
 router.post("/reset-password", resetPassword);    // New route to reset the password
-router.post("/user/:id", verifyToken, getUserDetails); 
-router.post("/exam", createExam);
+router.post("/user/:id", verifyToken, getUserDetails);
+ 
+router.post("/exam", createExam); // done
+
 router.get("/exam/:examId", getExamById);
-router.put("/user/update", verifyToken, updateUser);
+
+// get subject name and type
+
+router.put("/user/update", verifyToken, updateUser);//  
+
 router.post("/question/add", createQuestion);
-router.post("/question/exam/:exam_id", getQuestionsByExamId);
+
+router.get("/question/exam/:exam_id", getQuestionsByExamId);
+
 router.post("/exam/update/:examId", updateExam);
+
+// update question
+// get all questions by subject name, type, exam id
+
+// get all users data 
+
 
 
 
