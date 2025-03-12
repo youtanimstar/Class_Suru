@@ -27,10 +27,10 @@ router.get("/user/all",getAllUsers);
 
 // Exam Apis
 router.post("/exam", createExam); // done
-router.get("/exam/:examId", getExamById);
+router.get("/exam/:examId", getExamById); //done
 router.get("/exam/:subject/:type", getExamBySubjectAndType); // done
 router.put("/exam/update/:examId", updateExam);
-router.delete("/exam/delete/:examId", deleteExam);
+router.delete("/exam/delete/:examId", deleteExam); // done
 
 
 // Questions Apis
@@ -38,7 +38,7 @@ router.post("/question/add", createQuestion); // done
 router.get("/question/exam/:exam_id", getQuestionsByExamId); //done
 router.get("/question/:question_id", getQuestionById);
 router.put("/question/update/:question_id", updateQuestion);
-router.delete("/question/delete/:question_id", deleteQuestion);
+router.delete("/question/delete/:question_id", deleteQuestion); // done
 
 
 
