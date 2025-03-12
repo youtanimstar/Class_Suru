@@ -24,7 +24,7 @@ const keepAliveQuery = async() => {
 const createQuestion = async (examId, question_text, options, correct_option) => {
     try {
         // Ensure options is stored as a JSON string
-        const formattedOptions = JSON.stringify(options);
+        const formattedOptions = Array.isArray(options) ? JSON.stringify(options) : "[]";
 
         const result = await pool.query(
             `INSERT INTO questions (exam_id, question_text, options, correct_option) 
@@ -33,13 +33,15 @@ const createQuestion = async (examId, question_text, options, correct_option) =>
             [examId, question_text, formattedOptions, correct_option]
         );
 
-        return result.rows[0]; // Return inserted question
+        return {
+            ...result.rows[0],
+            options: JSON.parse(result.rows[0].options) // Ensure it's returned as an array
+        };
     } catch (error) {
         console.error("Database error (createQuestion):", error);
         throw new Error(error.message || "Database error while creating question");
     }
 };
-
 
 /**
  * Fetches all questions for a given exam.
@@ -58,7 +60,9 @@ const getQuestionsByExamId = async (exam_id) => {
         // Parse JSON options safely
         return result.rows.map(row => ({
             ...row,
-            options: row.options ? JSON.parse(row.options) : [] // Avoid errors if NULL
+            options: (typeof row.options === "string" && row.options.trim() !== "") 
+                ? JSON.parse(row.options) 
+                : [] // Return empty array if options are invalid or NULL
         }));
     } catch (error) {
         console.error("Database error (getQuestionsByExamId):", error);

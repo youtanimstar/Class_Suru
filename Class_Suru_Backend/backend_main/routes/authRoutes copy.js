@@ -18,13 +18,6 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);  // New route for password reset request
 router.post("/reset-password", resetPassword);    // New route to reset the password
-<<<<<<< HEAD
-router.post("/user/:id", verifyToken, getUserDetails); 
-router.post("/exam", createExam); // working fine
-router.get("/exam/:examId", getExamById); // working fine
-router.put("/user/update", verifyToken, updateUser); 
-router.post("/question/add", createQuestion); // working fine
-=======
 router.post("/user/:id", verifyToken, getUserDetails);
  
 router.post("/exam", createExam); // done
@@ -37,7 +30,6 @@ router.put("/user/update", verifyToken, updateUser);//
 
 router.post("/question/add", createQuestion);
 
->>>>>>> main
 router.post("/question/exam/:exam_id", getQuestionsByExamId);
 
 router.post("/exam/update/:examId", updateExam);
