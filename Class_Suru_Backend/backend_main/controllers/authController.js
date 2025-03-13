@@ -10,7 +10,9 @@ import {
     storeResetToken,
     getUserByResetToken,
     updateUserPassword,
-    getAllUsers as getAllUsersModel
+    getAllUsers as getAllUsersModel,
+    findAdminByEmail,
+    verifyAdminOTP
 } from "../models/userModel.js";
 
 dotenv.config();
@@ -213,4 +215,47 @@ const getAllUsers = async (req, res) => {
     }
 }
 
-export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser, forgotPassword, resetPassword,getAllUsers };
+
+const adminLogin = async (req,res)=>{
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
+
+        const user = await findAdminByEmail(email);
+        if (!user || password!== user.password) {
+            return res.status(400).json({ success: false, message: "Invalid email or password" });
+        }
+
+        if(user.role !== 'Admin'){
+            return res.status(401).json({ success: false, message: "Unauthorized: Only Admins can login" });
+        }
+
+        // const token = generateToken(user);
+        res.status(200).json({ success: true, message: "Primary Checking successful" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+}
+
+const checkAdminOtp = async (req,res)=>{
+    try {
+        const { email, otp } = req.body;
+        if (!email || !otp) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
+
+        const admin = await verifyAdminOTP(email,otp);
+        if (!admin) {
+            return res.status(400).json({ success: false, message: "Invalid email or otp" });
+        }
+
+        const token = generateToken(admin);
+        res.status(200).json({ success: true, message: "Authorization Successful",token });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+}
+
+export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser, forgotPassword, resetPassword,getAllUsers,adminLogin,checkAdminOtp };
