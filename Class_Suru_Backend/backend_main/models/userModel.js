@@ -1,5 +1,7 @@
 import pg from "pg";
 import dotenv from "dotenv";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -13,6 +15,16 @@ const pool = new pg.Pool({
   max: 20,  
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000
+});
+
+
+// Email configuration
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+    },
 });
 
 // Test the database connection
@@ -139,6 +151,55 @@ const getAllUsers = async () => {
   }
 }
 
+const findAdminByEmail = async (email) => {
+  try {
+    const result = await pool.query("SELECT * FROM admin WHERE email = $1", [email]);
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    await pool.query(
+      "UPDATE admin SET otp = $1, otp_expiry = NOW() + INTERVAL '5 minutes' WHERE email = $2",
+      [otp, email]
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Admin Login OTP",
+      html: `
+      <div style="text-align: center;">
+        <img src="https://class-suru.vercel.app/assets/class_suru_logo-wIYO1Yaf.png" alt="Banner" style="width: 100%; max-width: 200px;margin:0 auto;"/>
+        <h2>Admin Login OTP</h2>
+        <p>Dear Admin,</p>
+        <p>Your One-Time Password (OTP) for admin login is:</p>
+        <h3 style="font-size: 24px; color: #504eec;">${otp}</h3>
+        <p>This OTP is valid for 5 minutes. Please do not share this OTP with anyone.</p>
+        <p>Thank you,</p>
+        <p>Class Suru Team</p>
+      </div>
+      `,
+    });
+    return result.rows[0];
+  } catch (error) {
+    console.error("Database error (findAdminByEmail):", error);
+    throw new Error("Database error");
+  }
+}
+
+const verifyAdminOTP = async (email, otp) => {
+  try {
+    const result = await pool.query("SELECT * FROM admin WHERE email = $1 AND otp = $2 AND otp_expiry > NOW()", [email, otp]);
+    
+    if (result.rows.length === 0) {
+      throw new Error("OTP expired");
+    }
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error("Database error (checkAdminOTP):", error);
+    throw new Error(error.message || "Database error");
+  }
+}
+
 export { 
   pool,
   createUser, 
@@ -148,5 +209,7 @@ export {
   storeResetToken, 
   getUserByResetToken, 
   updateUserPassword,
-  getAllUsers
+  getAllUsers,
+  findAdminByEmail,
+  verifyAdminOTP
 };

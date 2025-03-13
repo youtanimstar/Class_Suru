@@ -7,7 +7,9 @@ import {
     getUserDetails, 
     verifyToken, 
     updateUser,
-    getAllUsers
+    getAllUsers,
+    adminLogin,
+    checkAdminOtp
 } from "../controllers/authController.js";
 import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType } from "../controllers/examController.js";
 import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
@@ -29,7 +31,10 @@ router.post("/reset-password", resetPassword);
 router.post("/user/:id", verifyToken, getUserDetails);
 router.put("/user/update", verifyToken, updateUser);  
 
+// Admin Apis
 router.get("/user/all",getAllUsers);
+router.post("/admin/login",adminLogin);
+router.post("/admin/login/otp",checkAdminOtp);
 
 // Exam Apis
 router.post("/exam", createExam); // done
