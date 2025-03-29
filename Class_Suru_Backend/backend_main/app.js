@@ -11,7 +11,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL, // Frontend local development
+    "https://class-suru.vercel.app/", // Frontend local development
     "http://localhost:5173", // Alternative localhost
   ],
   credentials: true,
