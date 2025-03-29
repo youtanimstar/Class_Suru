@@ -9,11 +9,21 @@ dotenv.config();
     cloudinary.config({ 
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
         api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret: process.env. CLOUDINARY_API_SECRET// Click 'View API Keys' above to copy your API secret
+        api_secret: process.env.CLOUDINARY_API_SECRET
     });
+
+    // Check Cloudinary connection
+    cloudinary.api.ping()
+        .then(() => console.log("✅ Cloudinary is connected successfully!"))
+        .catch((error) => console.error("❌ Cloudinary connection failed:", error));
     
     const uploadImage = async (req, res) => {
         try {
+            const { folder } = req.params;
+
+            if (!folder) {
+                return res.status(400).json({ success: false, message: "No folder name provided in params!" });
+            }
             if (!req.files || !req.files.image) {
                 return res.status(400).json({ success: false, message: "No image uploaded!" });
             }
@@ -22,7 +32,7 @@ dotenv.config();
     
             // ✅ Upload to Cloudinary
             const result = await cloudinary.uploader.upload(image.tempFilePath, {
-                folder: "classSuru", // Store in Cloudinary "uploads" folder
+                folder: `ClassSuru/${folder}`, // Store in Cloudinary "uploads" folder with subfolder
                 use_filename: true,
                 unique_filename: false
             });
@@ -37,5 +47,28 @@ dotenv.config();
             return res.status(500).json({ success: false, message: error.message });
         }
     };
+    const deleteImage = async (req, res) => {
+        try {
+            const { public_id } = req.body;
+
+            if (!public_id) {
+                return res.status(400).json({ success: false, message: "No public_id provided!" });
+            }
+
+            // ✅ Delete from Cloudinary
+            const response = await cloudinary.uploader.destroy(public_id);
+            console.log('Cloudinary response:', response);
+            
+
+            return res.status(200).json({
+                success: true,
+                message: "Image deleted successfully!"
+            });
+        } catch (error) {
+            console.error("❌ Delete Error:", error);
+            return res.status(500).json({ success: false, message: error.message });
+        }
+    };
+
+    export { uploadImage, deleteImage };
     
-    export { uploadImage };

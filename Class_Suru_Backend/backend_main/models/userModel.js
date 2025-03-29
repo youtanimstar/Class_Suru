@@ -2,6 +2,7 @@ import pg from "pg";
 import dotenv from "dotenv";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import process from "process";
 
 dotenv.config();
 
@@ -27,7 +28,8 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Test the database connection
+const connectPool = async()=>{
+  // Test the database connection
 pool.connect((err, client, release) => {
   if (err) {
     console.error("Error acquiring client", err.stack);
@@ -36,6 +38,16 @@ pool.connect((err, client, release) => {
     console.log("Database connected successfully");
     release();
   }
+});
+}
+
+connectPool();
+
+
+
+pool.on("error", (err, client) => {
+  console.error("Unexpected error on idle client", err);
+  connectPool();
 });
 
 // const keepAliveQuery = async() => {
@@ -79,7 +91,7 @@ const findUserByEmail = async (email) => {
 // Find user by ID
 const findUserById = async (userId) => {
   try {
-    const result = await pool.query("SELECT id, name, email, phone_number FROM users WHERE id = $1", [userId]);
+    const result = await pool.query("SELECT id, name, email, phone_number,avatar FROM users WHERE id = $1", [userId]);
     return result.rows[0];
   } catch (error) {
     console.error("Database error (findUserById):", error);

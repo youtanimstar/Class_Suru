@@ -16,7 +16,7 @@ import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, 
 
 import {getUserResult, getResultByAnswerId } from "../controllers/resultController.js";
 import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../controllers/answerController.js";
-import { uploadImage } from "../utils/cloudnary.js";
+import { deleteImage, uploadImage } from "../utils/cloudnary.js";
 
 
 
@@ -63,7 +63,8 @@ router.get("/answer/byid/:answerId", getAnswerById);
 
 
 // cloudinary image upload
-router.post("/upload-image", uploadImage);
+router.post("/:folder/upload-image", uploadImage);
+router.delete("/delete-image", deleteImage);
 
 // update question
 // get all questions by subject name, type, exam id
