@@ -6,19 +6,19 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "app.js"
+      "source": "/(.*)",
+      "destination": "/app.js"
     }
   ],
   "headers": [
     {
-      "source": "/api/(.*)", 
+      "source": "/api/(.*)",  
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://class-suru.vercel.app"
+          "value": "https://class-suru.vercel.app" 
         },
         {
           "key": "Access-Control-Allow-Credentials",
