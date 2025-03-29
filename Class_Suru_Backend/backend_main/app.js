@@ -9,7 +9,13 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    process.env.FRONTEND_URL, // Frontend local development
+    "http://localhost:5173", // Alternative localhost
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(fileUpload({ useTempFiles: true }));
 
