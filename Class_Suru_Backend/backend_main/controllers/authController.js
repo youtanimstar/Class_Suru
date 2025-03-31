@@ -6,13 +6,14 @@ import {
     createUser,
     findUserByEmail,
     findUserById,
-    updateUserDetail,
     storeResetToken,
     getUserByResetToken,
     updateUserPassword,
     getAllUsers as getAllUsersModel,
     findAdminByEmail,
-    verifyAdminOTP
+    verifyAdminOTP,
+    addUserDetail,
+    updateUserDetails
 } from "../models/userModel.js";
 
 dotenv.config();
@@ -187,14 +188,14 @@ const getUserDetails = async (req, res) => {
 };
 
 // Update User Details Route
-const updateUser = async (req, res) => {
+const addUserInfo = async (req, res) => {
     try {
         const { userId, exam, userClass, favouriteSubject } = req.body;
         if (!userId || !exam || !userClass || !favouriteSubject) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        const updatedUser = await updateUserDetail(userId, exam, userClass, favouriteSubject);
+        const updatedUser = await addUserDetail(userId, exam, userClass, favouriteSubject);
         res.status(200).json({ success: true, message: "User details updated successfully", user: updatedUser });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server error", error: error.message });
@@ -258,4 +259,19 @@ const checkAdminOtp = async (req,res)=>{
     }
 }
 
-export { signup, login, verifyToken, protectedRoute, getUserDetails, updateUser, forgotPassword, resetPassword,getAllUsers,adminLogin,checkAdminOtp };
+const updateUser = async (req, res) => {
+    try {
+        const updates = req.body;
+        const { id } = req.params;
+        if (!updates) {
+            return res.status(400).json({ success: false, message: "no fields to update" });
+        }
+
+        const updatedUser = await updateUserDetails(id, updates);
+        res.status(200).json({ success: true, message: "User details updated successfully", user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+}
+
+export { signup, login, verifyToken, protectedRoute, getUserDetails, addUserInfo, forgotPassword, resetPassword,getAllUsers,adminLogin,checkAdminOtp,updateUser };

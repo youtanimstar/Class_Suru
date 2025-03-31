@@ -9,7 +9,8 @@ import {
     updateUser,
     getAllUsers,
     adminLogin,
-    checkAdminOtp
+    checkAdminOtp,
+    addUserInfo
 } from "../controllers/authController.js";
 import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType } from "../controllers/examController.js";
 import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
@@ -29,7 +30,8 @@ router.post("/login", login); //done
 router.post("/forgot-password", forgotPassword);  
 router.post("/reset-password", resetPassword);    
 router.post("/user/:id", verifyToken, getUserDetails);
-router.put("/user/update", verifyToken, updateUser);  
+router.put("/user/update/:id", updateUser);
+router.put("/user/add/info", verifyToken, addUserInfo);  
 
 // Admin Apis
 router.get("/user/all",getAllUsers);
@@ -63,7 +65,7 @@ router.get("/answer/byid/:answerId", getAnswerById);
 
 
 // cloudinary image upload
-router.post("/:folder/upload-image", uploadImage);
+router.post("/upload-image/:folder", uploadImage);
 router.delete("/delete-image", deleteImage);
 
 // update question

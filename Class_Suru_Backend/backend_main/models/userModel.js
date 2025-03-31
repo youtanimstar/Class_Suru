@@ -13,37 +13,34 @@ const pool = new pg.Pool({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
-  max: 20,  
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
-
 
 // Email configuration
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-    },
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
+  },
 });
 
-const connectPool = async()=>{
+const connectPool = async () => {
   // Test the database connection
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error("Error acquiring client", err.stack);
-    throw new Error("Database connection error");
-  } else {
-    console.log("Database connected successfully");
-    release();
-  }
-});
-}
+  pool.connect((err, client, release) => {
+    if (err) {
+      console.error("Error acquiring client", err.stack);
+      throw new Error("Database connection error");
+    } else {
+      console.log("Database connected successfully");
+      release();
+    }
+  });
+};
 
 connectPool();
-
-
 
 pool.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
@@ -54,7 +51,7 @@ pool.on("error", (err, client) => {
 //   try {
 //     await pool.query("SELECT 1");
 //     // console.log('Database is alive');
-    
+
 //   } catch (err) {
 //     console.error("Error pinging database:", err.stack);
 //   }
@@ -80,7 +77,9 @@ const createUser = async (email, username, hashedPassword, phoneNumber) => {
 // Find user by email
 const findUserByEmail = async (email) => {
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     return result.rows[0];
   } catch (error) {
     console.error("Database error (findUserByEmail):", error);
@@ -91,7 +90,10 @@ const findUserByEmail = async (email) => {
 // Find user by ID
 const findUserById = async (userId) => {
   try {
-    const result = await pool.query("SELECT id, name, email, phone_number,avatar FROM users WHERE id = $1", [userId]);
+    const result = await pool.query(
+      "SELECT * FROM users WHERE id = $1",
+      [userId]
+    );
     return result.rows[0];
   } catch (error) {
     console.error("Database error (findUserById):", error);
@@ -100,7 +102,7 @@ const findUserById = async (userId) => {
 };
 
 // Update user details
-const updateUserDetail = async (userId, exam, userClass, favouriteSubject) => {
+const addUserDetail = async (userId, exam, userClass, favouriteSubject) => {
   try {
     const result = await pool.query(
       "UPDATE users SET exam_for = $1, class = $2, favourite_subject = $3 WHERE id = $4 RETURNING *",
@@ -161,11 +163,13 @@ const getAllUsers = async () => {
     console.error("Database error (getAllUsers):", error);
     throw new Error("Database error");
   }
-}
+};
 
 const findAdminByEmail = async (email) => {
   try {
-    const result = await pool.query("SELECT * FROM admin WHERE email = $1", [email]);
+    const result = await pool.query("SELECT * FROM admin WHERE email = $1", [
+      email,
+    ]);
     const otp = crypto.randomInt(100000, 999999).toString();
 
     await pool.query(
@@ -195,33 +199,64 @@ const findAdminByEmail = async (email) => {
     console.error("Database error (findAdminByEmail):", error);
     throw new Error("Database error");
   }
-}
+};
 
 const verifyAdminOTP = async (email, otp) => {
   try {
-    const result = await pool.query("SELECT * FROM admin WHERE email = $1 AND otp = $2 AND otp_expiry > NOW()", [email, otp]);
-    
+    const result = await pool.query(
+      "SELECT * FROM admin WHERE email = $1 AND otp = $2 AND otp_expiry > NOW()",
+      [email, otp]
+    );
+
     if (result.rows.length === 0) {
       throw new Error("OTP expired");
     }
-    
+
     return result.rows[0];
   } catch (error) {
     console.error("Database error (checkAdminOTP):", error);
     throw new Error(error.message || "Database error");
   }
-}
+};
 
-export { 
+const updateUserDetails = async (userId, updates) => {
+  try {
+    if (!updates) {
+      throw new Error("Some update field required");
+    }
+
+    const fields = Object.keys(updates);
+    if (fields.length === 0) {
+      throw new Error("No fields to update");
+    }
+    const values = fields
+      .map((field, index) => `${field} = $${index + 2}`)
+      .join(", ");
+    const query = `UPDATE users SET ${values} WHERE id = $1 RETURNING *`;
+
+    const result = await pool.query(query, [
+      userId,
+      ...fields.map((field) => updates[field]),
+    ]);
+
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error("Database error (updateUserDetails):", error);
+    throw new Error("Database error");
+  }
+};
+
+export {
   pool,
-  createUser, 
-  findUserByEmail, 
-  findUserById, 
-  updateUserDetail, 
-  storeResetToken, 
-  getUserByResetToken, 
+  createUser,
+  findUserByEmail,
+  findUserById,
+  addUserDetail,
+  storeResetToken,
+  getUserByResetToken,
   updateUserPassword,
   getAllUsers,
   findAdminByEmail,
-  verifyAdminOTP
+  verifyAdminOTP,
+  updateUserDetails
 };
