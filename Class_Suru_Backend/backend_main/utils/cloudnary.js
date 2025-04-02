@@ -24,19 +24,20 @@ dotenv.config();
             if (!folder) {
                 return res.status(400).json({ success: false, message: "No folder name provided in params!" });
             }
-            if (!req.files || !req.files.image) {
-                return res.status(400).json({ success: false, message: "No image uploaded!" });
-            }
+            // if (!req.files || !req.files.image) {
+            //     return res.status(400).json({ success: false, message: "No image uploaded!" });
+            // }
     
-            const image = req.files.image;
+            const image = req.file.path;
+            
     
             // ✅ Upload to Cloudinary
-            const result = await cloudinary.uploader.upload(image.tempFilePath, {
+            const result = await cloudinary.uploader.upload(image, {
                 folder: `ClassSuru/${folder}`, // Store in Cloudinary "uploads" folder with subfolder
                 use_filename: true,
                 unique_filename: false
             });
-              fs.unlinkSync(image.tempFilePath); // remove temp file
+            //   fs.unlinkSync(image.tempFilePath); // remove temp file
             return res.status(200).json({
                 success: true,
                 message: "Image uploaded successfully!",
