@@ -59,7 +59,7 @@ const verifyToken = (req, res, next) => {
 const signup = async (req, res) => {
     try {
         const { username, email, password, phone_number } = req.body;
-        if (!username || !email || !password || !phone_number) {
+        if (!username || !email || !password ) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
