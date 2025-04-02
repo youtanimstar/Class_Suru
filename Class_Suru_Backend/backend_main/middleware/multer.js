@@ -2,10 +2,6 @@ import multer from "multer";
 import fs from "fs";
 
 // Ensure the tmp directory exists
-const tmpDir = "tmp/";
-if (!fs.existsSync(tmpDir)) {
-  fs.mkdirSync(tmpDir);
-}
 
 const storage = multer.diskStorage({
   filename: function(req,file,cb)
