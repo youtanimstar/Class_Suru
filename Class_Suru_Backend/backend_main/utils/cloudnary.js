@@ -56,6 +56,9 @@ dotenv.config();
                 return res.status(400).json({ success: false, message: "No public_id provided!" });
             }
 
+            console.log('Deleting image with public_id:', public_id);
+            
+
             // ✅ Delete from Cloudinary
             const response = await cloudinary.uploader.destroy(public_id);
             console.log('Cloudinary response:', response);

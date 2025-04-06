@@ -8,16 +8,16 @@ import { pool } from "../models/userModel.js";
  * @param {number} correct_option - The correct option index.
  * @returns {Promise<object>} - The created question.
  */
-const createQuestion = async (exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks) => {
+const createQuestion = async (exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks,question_ans, question_ans_img) => {
     try {
         // Ensure options is stored as a JSON string
         // const formattedOptions = Array.isArray(options) ? JSON.stringify(options) : "[]";
 
         const result = await pool.query(
-            `INSERT INTO questions (exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+            `INSERT INTO questions (exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks,question_ans, question_ans_img) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
              RETURNING *`,
-            [exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks]
+            [exam_id, question_text,question_img_url, option_1,option_2,option_3,option_4,correct_marks, correct_option,wrong_marks,question_ans, question_ans_img]
         );
 
        if(!result) throw new Error("Failed to create question");
@@ -42,7 +42,8 @@ const getQuestionsByExamId = async (exam_id) => {
         const result = await pool.query(
             `SELECT * 
              FROM questions 
-             WHERE exam_id = $1`, 
+             WHERE exam_id = $1 
+             ORDER BY question_id`, 
             [exam_id]
         );
 
