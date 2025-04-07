@@ -9,6 +9,8 @@ dotenv.config();
 const app = express();
 
 
+
+
 app.use(cors({
   origin: [
     "https://class-suru.vercel.app/", // Frontend local development
@@ -19,7 +21,8 @@ app.use(cors({
 app.options("*", cors());
 
 app.use(express.json());
-app.use(fileUpload({ useTempFiles: true }));
+app.use(express.urlencoded({ extended: true }));
+// app.use(fileUpload({ useTempFiles: true }));
 
 // import { createRequire } from "module";
 // const require = createRequire(import.meta.url);

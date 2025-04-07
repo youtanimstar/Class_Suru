@@ -38,6 +38,7 @@ import {
   getAnswerById,
 } from "../controllers/answerController.js";
 import { deleteImage, uploadImage } from "../utils/cloudnary.js";
+import { upload } from "../middleware/multer.js";
 
 const router = express.Router();
 
@@ -80,7 +81,7 @@ router.get("/answer/:questionId", getAnswerByQuestionId);
 router.get("/answer/byid/:answerId", getAnswerById);
 
 // cloudinary image upload
-router.post("/upload-image/:folder", uploadImage);
+router.post("/upload-image/:folder",upload.single('image'), uploadImage);
 router.delete("/delete-image", deleteImage);
 
 // update question
