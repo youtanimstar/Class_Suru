@@ -1,42 +1,59 @@
 import express from "express";
-import { 
-    signup, 
-    login, 
-    forgotPassword, 
-    resetPassword, 
-    getUserDetails, 
-    verifyToken, 
-    updateUser,
-    getAllUsers,
-    adminLogin,
-    checkAdminOtp,
-    addUserInfo
+import {
+  signup,
+  login,
+  forgotPassword,
+  resetPassword,
+  getUserDetails,
+  verifyToken,
+  updateUser,
+  getAllUsers,
+  adminLogin,
+  checkAdminOtp,
+  addUserInfo,
 } from "../controllers/authController.js";
-import { createExam, getExamById, updateExam, deleteExam, getExamBySubjectAndType } from "../controllers/examController.js";
-import { createQuestion, getQuestionsByExamId ,getQuestionById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
+import {
+  createExam,
+  getExamById,
+  updateExam,
+  deleteExam,
+  getExamBySubjectAndType,
+  getQuestionForExam,
+} from "../controllers/examController.js";
+import {
+  createQuestion,
+  getQuestionsByExamId,
+  getQuestionById,
+  updateQuestion,
+  deleteQuestion,
+} from "../controllers/questionController.js";
 
-import {getUserResult, getResultByAnswerId } from "../controllers/resultController.js";
-import { submitAnswer, getAnswerByQuestionId, getAnswerById   } from "../controllers/answerController.js";
+import {
+  getUserResult,
+  getResultByAnswerId,
+} from "../controllers/resultController.js";
+import {
+  submitAnswer,
+  getAnswerByQuestionId,
+  getAnswerById,
+} from "../controllers/answerController.js";
 import { deleteImage, uploadImage } from "../utils/cloudnary.js";
-
-
-
 
 const router = express.Router();
 
 // User Apis
 router.post("/signup", signup); //done
 router.post("/login", login); //done
-router.post("/forgot-password", forgotPassword);  
-router.post("/reset-password", resetPassword);    
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 router.post("/user/:id", verifyToken, getUserDetails);
 router.put("/user/update/:id", updateUser);
-router.put("/user/add/info", verifyToken, addUserInfo);  
+router.put("/user/add/info", verifyToken, addUserInfo);
 
 // Admin Apis
-router.get("/user/all",getAllUsers);
-router.post("/admin/login",adminLogin);
-router.post("/admin/login/otp",checkAdminOtp);
+router.get("/user/all", getAllUsers);
+router.post("/admin/login", adminLogin);
+router.post("/admin/login/otp", checkAdminOtp);
 
 // Exam Apis
 router.post("/exam", createExam); // done
@@ -44,7 +61,7 @@ router.get("/exam/:examId", getExamById); //done
 router.get("/exam/:subject/:type", getExamBySubjectAndType); // done
 router.put("/exam/update/:examId", updateExam); // done
 router.delete("/exam/delete/:examId", deleteExam); // done
-
+router.post("/exam/user/:examId", getQuestionForExam);
 
 // Questions Apis
 router.post("/question/add", createQuestion); // done
@@ -59,10 +76,8 @@ router.get("/result/user/:userId", getUserResult);
 
 //answer Apis
 router.post("/answers/submit", submitAnswer);
-router.get("/answer/:questionId", getAnswerByQuestionId);       
+router.get("/answer/:questionId", getAnswerByQuestionId);
 router.get("/answer/byid/:answerId", getAnswerById);
-
-
 
 // cloudinary image upload
 router.post("/upload-image/:folder", uploadImage);
@@ -71,9 +86,6 @@ router.delete("/delete-image", deleteImage);
 // update question
 // get all questions by subject name, type, exam id
 
-// get all users data 
-
-
-
+// get all users data
 
 export default router;
