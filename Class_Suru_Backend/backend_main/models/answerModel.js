@@ -70,6 +70,13 @@ const submitExamModel = async (examId, userId, answers) => {
 
     // console.log(answer);
 
+    if(answer.length === 0) {
+      return {
+        result_id,
+        message: "Answers submitted successfully",
+      };
+    }
+
     // Insert into answers table
     const insertPromise = await pool.query(
       `INSERT INTO answers (result_id, question_id, selected_option)
@@ -128,7 +135,18 @@ const getAnswerByResultIdModel = async (result_id) =>{
   // get the answers info from result_id
   const answersData = await pool.query(`SELECT * FROM answers WHERE result_id = $1`,[result_id]);
   if(answersData.rowCount === 0){
-    throw new Error("Answers not found");
+    return {
+      result_id,
+      exam_id,
+      user_id,
+      total_questions,
+      total_correct_answers,
+      total_incorrect_answers: total_questions,
+      total_unattempted_questions,
+      score,
+      accuracy,
+      total_marks,
+    };
   }
 
   // console.log("resultData",data.rows);
