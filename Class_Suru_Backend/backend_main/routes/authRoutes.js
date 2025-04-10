@@ -36,6 +36,8 @@ import {
   submitAnswer,
   getAnswerByQuestionId,
   getAnswerById,
+  submitExam,
+  getResultByResultId,
 } from "../controllers/answerController.js";
 import { deleteImage, uploadImage } from "../utils/cloudnary.js";
 import { upload } from "../middleware/multer.js";
@@ -79,6 +81,9 @@ router.get("/result/user/:userId", getUserResult);
 router.post("/answers/submit", submitAnswer);
 router.get("/answer/:questionId", getAnswerByQuestionId);
 router.get("/answer/byid/:answerId", getAnswerById);
+
+router.post("/exam/submit",submitExam);
+router.get("/exam/user/result/:result_id",getResultByResultId)
 
 // cloudinary image upload
 router.post("/upload-image/:folder",upload.single('image'), uploadImage);

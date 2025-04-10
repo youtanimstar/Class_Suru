@@ -1,7 +1,9 @@
 import { 
   submitAnswer as submitAnswerModel, 
   getAnswerByQuestionId as getAnswerByQuestionIdModel, 
-  getAnswerById as getAnswerByIdModel  
+  getAnswerById as getAnswerByIdModel,  
+  submitExamModel,
+  getAnswerByResultIdModel
 } from "../models/answerModel.js";
 
 const submitAnswer = async (req, res) => {
@@ -65,4 +67,43 @@ const getAnswerById = async (req, res) => {
   }
 };
 
-export { submitAnswer, getAnswerByQuestionId, getAnswerById };
+const submitExam = async (req,res)=>{
+  try {
+    const {exam_id,user_id,answers} = req.body;
+    if(!exam_id || !user_id || !answers){
+      return res.status(400).json({success:false,message:"Missing required fields"});
+    }
+    // console.log('answers',answers);
+    
+    const result = await submitExamModel(exam_id,user_id,answers);
+    if(!result){
+      return res.status(404).json({success:false,message:"Exam not found"});
+    }
+    res.status(201).json({success:true,message:"Exam submitted successfully",result});
+  } catch (error) {
+    console.log('Error in submitExam:', error.message);
+    res.status(500).json({success:false,message:"Internal server error"});
+    
+  }
+}
+
+const getResultByResultId = async (req,res)=>{
+  try {
+    // console.log('get Result by id called');
+    
+    const {result_id} = req.params;
+    if(!result_id){
+      return res.status(400).json({success:false,message:"Result ID is required"});
+    }
+    const result = await getAnswerByResultIdModel(result_id);
+    if(!result){
+      return res.status(404).json({success:false,message:"Result not found"});
+    }
+    res.status(200).json({success:true,result});
+  } catch (error) {
+    console.log('Error in getResultByResultId:', error.message);
+    res.status(500).json({success:false,message:"Internal server error"});
+  }
+}
+
+export { submitAnswer, getAnswerByQuestionId, getAnswerById, submitExam,getResultByResultId };
