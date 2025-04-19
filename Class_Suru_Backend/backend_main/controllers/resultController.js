@@ -2,8 +2,8 @@ import { getUserResult as getUserResultModel, getResultByAnswerId as getResultBy
 
  const getUserResult = async (req, res) => {
   try {
-    const { examId, userId } = req.params;
-    const result = await getUserResultModel(examId, userId);
+    const { userId } = req.params;
+    const result = await getUserResultModel(userId);
     
     res.status(200).json({ success: true, result });
   } catch (error) {
@@ -20,7 +20,7 @@ import { getUserResult as getUserResultModel, getResultByAnswerId as getResultBy
       return res.status(404).json({ success: false, message: "Result not found" });
     }
     
-    res.status(200).json({ success: true, result });
+    res.status(200).json({ success: true, result: result });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
