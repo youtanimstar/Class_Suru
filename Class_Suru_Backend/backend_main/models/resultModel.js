@@ -30,7 +30,7 @@ const insertResult = async (answerId, examId, userId, isCorrect) => {
        FROM results 
        INNER JOIN exams ON results.exam_id = exams.id 
        WHERE results.user_id = $1 
-       ORDER BY results.result_id DESC`,
+       ORDER BY results.result_id DESC LIMIT 5`,
       [userId]
     );
 
