@@ -26,32 +26,19 @@ const insertResult = async (answerId, examId, userId, isCorrect) => {
     // );
 
     const results = await pool.query(
-      `SELECT * FROM results WHERE user_id = $1 ORDER BY result_id DESC`,
+      `SELECT exams.*, results.* 
+       FROM results 
+       INNER JOIN exams ON results.exam_id = exams.id 
+       WHERE results.user_id = $1 
+       ORDER BY results.result_id DESC`,
       [userId]
     );
-    if(results.rows.length === 0) {
-        return null; // No results found for the user
+
+    if (results.rows.length === 0) {
+      return null; // No results found for the user
     }
-    // const result = results.rows[0];
 
-    // console.log('results', results.rows);
-
-    const exams = await Promise.all(results.rows.map(async(result) => {
-        const { exam_id, result_id } = result;
-        
-        const resultDetails = await getAnswerByResultIdModel(result_id);
-
-        const examDetails = await pool.query(
-            `SELECT * FROM exams WHERE id = $1`,
-            [exam_id]
-        );
-        // Combine result details and exam details into a single object
-        return {
-          ...resultDetails, ...examDetails.rows[0]
-        };
-    }));
-
-    return exams;
+    return results.rows;
 };
 
  const getResultByAnswerId = async (answerId) => {
