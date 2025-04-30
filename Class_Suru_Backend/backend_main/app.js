@@ -13,6 +13,7 @@ const app = express();
 
 app.use(cors({
   origin: [
+    "https://www.classsuru.in/",
     "https://class-suru.vercel.app/", // Frontend local development
     "http://localhost:5173", // Alternative localhost
   ],
