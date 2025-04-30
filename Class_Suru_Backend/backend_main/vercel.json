@@ -18,10 +18,6 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://class-suru.vercel.app"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
           "value": "https://www.classsuru.in/"
         },
         {
