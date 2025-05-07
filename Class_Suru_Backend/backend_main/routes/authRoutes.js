@@ -31,6 +31,7 @@ import {
 import {
   getUserResult,
   getResultByAnswerId,
+  getResultDetailsByResultId
 } from "../controllers/resultController.js";
 import {
   submitAnswer,
@@ -76,7 +77,7 @@ router.delete("/question/delete/:question_id", deleteQuestion); // done
 // Result Apis
 router.get("/result/:answerId", getResultByAnswerId);
 router.get("/result/user/:userId", getUserResult);
-
+router.get("/result/review/:resultId", getResultDetailsByResultId);
 //answer Apis
 router.post("/answers/submit", submitAnswer);
 router.get("/answer/:questionId", getAnswerByQuestionId);
