@@ -173,7 +173,7 @@ const getAnswerByResultIdModel = async (result_id) =>{
   total_unattempted_questions = total_questions - (total_correct_answers + total_incorrect_answers);
 
   if (total_questions > 0) {
-    accuracy = (total_correct_answers / total_questions) * 100;
+    accuracy = (total_correct_answers / (total_correct_answers + total_incorrect_answers)) * 100;
   }
 
   return {

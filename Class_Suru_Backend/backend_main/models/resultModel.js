@@ -1,4 +1,4 @@
-import { pool } from '../models/userModel.js';
+import { pool } from '../models/userModel.js'; // ✅ Correct import for PostgreSQL connection
 
 // Not used in bulk mode, but can still be useful elsewhere
 const insertResult = async (answerId, examId, userId, isCorrect) => {
