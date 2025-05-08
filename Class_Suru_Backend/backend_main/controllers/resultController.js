@@ -1,4 +1,4 @@
-import { getUserResult as getUserResultModel, getResultByAnswerId as getResultByAnswerIdModel } from "../models/resultModel.js";
+import { getUserResult as getUserResultModel, getResultByAnswerId as getResultByAnswerIdModel, getResultDetailsByResultId as getResultDetailsByResultIdModel } from "../models/resultModel.js";
 
  const getUserResult = async (req, res) => {
   try {
@@ -26,4 +26,19 @@ import { getUserResult as getUserResultModel, getResultByAnswerId as getResultBy
   }
 };
 
-export { getUserResult, getResultByAnswerId }; // ✅ Correct export for other modules to use    
+const getResultDetailsByResultId = async (req, res) => {
+  try {
+    const { resultId } = req.params;
+    const resultDetails = await getResultDetailsByResultIdModel(resultId);
+
+    if (!resultDetails || resultDetails.length === 0) {
+      return res.status(404).json({ success: false, message: "Result not found" });
+    }
+
+    res.status(200).json({ success: true, data: resultDetails });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { getUserResult, getResultByAnswerId, getResultDetailsByResultId }; // ✅ Correct export for other modules to use    
