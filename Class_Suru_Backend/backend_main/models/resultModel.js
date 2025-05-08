@@ -15,7 +15,7 @@ const insertResult = async (answerId, examId, userId, isCorrect) => {
 };
 
 // Get result summary (useful for user profile, dashboard)
-const getUserResult = async (userId) => {
+const getUserResult = async (userId,page) => {
   // const result = await pool.query(
   //   `SELECT COUNT(*) AS total_questions, 
   //           SUM(CASE WHEN status = 'Correct' THEN 1 ELSE 0 END) AS correct_answers,
@@ -31,8 +31,9 @@ const getUserResult = async (userId) => {
      FROM results 
      INNER JOIN exams ON results.exam_id = exams.id 
      WHERE results.user_id = $1 
-     ORDER BY results.result_id DESC LIMIT 5`,
-    [userId]
+     ORDER BY results.result_id DESC 
+     LIMIT 5 OFFSET $2`,
+    [userId, (page - 1) * 5]
   );
 
   if (results.rows.length === 0) {
