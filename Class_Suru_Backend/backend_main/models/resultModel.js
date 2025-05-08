@@ -15,18 +15,31 @@ const insertResult = async (answerId, examId, userId, isCorrect) => {
 };
 
 // Get result summary (useful for user profile, dashboard)
-const getUserResult = async (examId, userId) => {
-  const result = await pool.query(
-    `SELECT COUNT(*) AS total_questions, 
-            SUM(CASE WHEN status = 'Correct' THEN 1 ELSE 0 END) AS correct_answers,
-            SUM(total_marks) AS total_marks,
-            SUM(obtained_marks) AS obtained_marks
+const getUserResult = async (userId) => {
+  // const result = await pool.query(
+  //   `SELECT COUNT(*) AS total_questions, 
+  //           SUM(CASE WHEN status = 'Correct' THEN 1 ELSE 0 END) AS correct_answers,
+  //           SUM(total_marks) AS total_marks,
+  //           SUM(obtained_marks) AS obtained_marks
+  //    FROM results 
+  //    WHERE exam_id = $1 AND user_id = $2`,
+  //   [examId, userId]
+  // );
+
+  const results = await pool.query(
+    `SELECT exams.*, results.* 
      FROM results 
-     WHERE exam_id = $1 AND user_id = $2`,
-    [examId, userId]
+     INNER JOIN exams ON results.exam_id = exams.id 
+     WHERE results.user_id = $1 
+     ORDER BY results.result_id DESC LIMIT 5`,
+    [userId]
   );
 
-  return result.rows[0];
+  if (results.rows.length === 0) {
+    return null; // No results found for the user
+  }
+
+  return results.rows;
 };
 
 // Utility for checking if answer already has a result entry
