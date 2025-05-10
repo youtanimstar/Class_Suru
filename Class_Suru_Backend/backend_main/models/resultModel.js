@@ -31,8 +31,8 @@ const getUserResult = async (userId,page) => {
      FROM results 
      INNER JOIN exams ON results.exam_id = exams.id 
      WHERE results.user_id = $1 
-     ORDER BY results.result_id DESC 
-     LIMIT 5 OFFSET $2`,
+     ORDER BY results.created_at DESC 
+     LIMIT 7 OFFSET $2`,
     [userId, (page - 1) * 5]
   );
 

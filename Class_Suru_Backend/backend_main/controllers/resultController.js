@@ -2,8 +2,8 @@ import { getUserResult as getUserResultModel, getResultByAnswerId as getResultBy
 
  const getUserResult = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const result = await getUserResultModel(userId,1);
+    const { userId,page } = req.params;
+    const result = await getUserResultModel(userId,page);
     
     res.status(200).json({ success: true, result });
   } catch (error) {
