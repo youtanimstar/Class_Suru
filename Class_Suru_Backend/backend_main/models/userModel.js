@@ -32,7 +32,7 @@ const connectPool = async () => {
   pool.connect((err, client, release) => {
     if (err) {
       console.error("Error acquiring client", err.stack);
-      throw new Error("Database connection error");
+      throw new Error("Database connection errors");
     } else {
       console.log("Database connected successfully");
       release();
@@ -90,10 +90,9 @@ const findUserByEmail = async (email) => {
 // Find user by ID
 const findUserById = async (userId) => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM users WHERE id = $1",
-      [userId]
-    );
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
     return result.rows[0];
   } catch (error) {
     console.error("Database error (findUserById):", error);
@@ -258,5 +257,5 @@ export {
   getAllUsers,
   findAdminByEmail,
   verifyAdminOTP,
-  updateUserDetails
+  updateUserDetails,
 };

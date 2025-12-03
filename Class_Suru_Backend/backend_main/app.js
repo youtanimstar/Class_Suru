@@ -8,17 +8,25 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://www.classsuru.in", // Production
+  "http://localhost:5173", // Local development
+  "https://class-suru-beta.vercel.app",
+];
 
-
-
-app.use(cors({
-  origin: [
-    "https://www.classsuru.in",
-    // "https://class-suru.vercel.app", // Frontend local development
-    "http://localhost:5173", // Alternative localhost
-  ],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed for this origin: " + origin));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -37,17 +45,14 @@ app.use(express.urlencoded({ extended: true }));
 // // Clear cache every hour (3600000 milliseconds)
 // setInterval(clearCache, 60000);
 
-
 app.get("/", (req, res) => {
   res.send("Class_Suru_Backend");
 });
-
 
 app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}, Link ${BACKEND_URL}`);
