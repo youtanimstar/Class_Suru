@@ -1,25 +1,31 @@
-import { getUserResult as getUserResultModel, getResultByAnswerId as getResultByAnswerIdModel, getResultDetailsByResultId as getResultDetailsByResultIdModel } from "../models/resultModel.js";
+import {
+  getUserResult as getUserResultModel,
+  getResultByAnswerId as getResultByAnswerIdModel,
+  getResultDetailsByResultId as getResultDetailsByResultIdModel,
+} from "../models/resultModel.js";
 
- const getUserResult = async (req, res) => {
+const getUserResult = async (req, res) => {
   try {
-    const { userId,page } = req.params;
-    const result = await getUserResultModel(userId,page);
-    
+    const { userId } = req.params;
+    const result = await getUserResultModel(userId, 1);
+
     res.status(200).json({ success: true, result });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
- const getResultByAnswerId = async (req, res) => {
+const getResultByAnswerId = async (req, res) => {
   try {
     const { answerId } = req.params;
     const result = await getResultByAnswerIdModel(answerId);
 
     if (!result) {
-      return res.status(404).json({ success: false, message: "Result not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Result not found" });
     }
-    
+
     res.status(200).json({ success: true, result: result });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -32,7 +38,9 @@ const getResultDetailsByResultId = async (req, res) => {
     const resultDetails = await getResultDetailsByResultIdModel(resultId);
 
     if (!resultDetails || resultDetails.length === 0) {
-      return res.status(404).json({ success: false, message: "Result not found" });
+      return res
+        .status(200)
+        .json({ success: false, message: "Result not found" });
     }
 
     res.status(200).json({ success: true, data: resultDetails });
@@ -41,4 +49,4 @@ const getResultDetailsByResultId = async (req, res) => {
   }
 };
 
-export { getUserResult, getResultByAnswerId, getResultDetailsByResultId }; // ✅ Correct export for other modules to use    
+export { getUserResult, getResultByAnswerId, getResultDetailsByResultId }; // ✅ Correct export for other modules to use
