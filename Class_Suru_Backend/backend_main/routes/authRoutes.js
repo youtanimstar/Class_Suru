@@ -76,7 +76,7 @@ router.delete("/question/delete/:question_id", deleteQuestion); // done
 
 // Result Apis
 router.get("/result/:answerId", getResultByAnswerId);
-router.get("/result/user/:userId", getUserResult);
+router.get("/result/user/:userId/:page", getUserResult);
 router.get("/result/review/:resultId", getResultDetailsByResultId);
 //answer Apis
 router.post("/answers/submit", submitAnswer);
